@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>image/connect.png</file>
+        <file>image/list.png</file>
+        <file>image/androidversion.png</file>
+        <file>image/ethernet.png</file>
+        <file>image/log.png</file>
+        <file>image/screen_resolution.png</file>
+        <file>image/wifi.png</file>
+        <file>image/modulename.png</file>
+        <file>image/serial_number.png</file>
+        <file>image/background.png</file>
+        <file>image/button_back.jpg</file>
+        <file>image/pull.png</file>
+        <file>image/push.png</file>
+        <file>image/install.png</file>
+        <file>image/uninstall.png</file>
+        <file>image/capture.png</file>
+        <file>image/restart.png</file>
+        <file>image/video.png</file>
+        <file>image/chipname.png</file>
+        <file>image/networkconnect.png</file>
+    </qresource>
+</RCC>
