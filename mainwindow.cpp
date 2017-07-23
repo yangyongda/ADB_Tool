@@ -74,19 +74,9 @@ void MainWindow::LinkDevices()
     arguments<<"devices";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","8");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
-        //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
-        foreach (QString str, strList) {
-            if(str.contains("\tdevice"))
-            {
-                QStringList deviceName = str.split("\t");
-                ui->DeviceList->addItem(deviceName.at(0));
-                ui->statusBar->showMessage(QStringLiteral("扫描已连接的设备结束"),2000);
-            }
-        }
+
     }
 
 }
@@ -97,23 +87,10 @@ void MainWindow::GetWifiMac()
     arguments<<"shell"<<"cat"<<"/sys/class/net/wlan0/address";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","9");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        if(!output.contains("No such file or directory")){
-            QStringList strList = output.split("\r\n");
-            foreach (QString str, strList) {
-                if(str.contains(":"))
-                {
-                    ui->WIFI_MAC_lineEdit->setText(str);
-                    if(!pattern)
-                        ui->statusBar->showMessage(QStringLiteral("获取WIFI MAC完成"),2000);
-                }
-            }
-        }else{
-            ui->WIFI_MAC_lineEdit->setText(QStringLiteral("请检查WIFI模块是否正常"));
-        }
     }
 
 }
@@ -124,23 +101,11 @@ void MainWindow::GetEthernetMac()
     arguments<<"shell"<<"cat"<<"/sys/class/net/eth0/address";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","10");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        if(!output.contains("No such file or directory")){
-            QStringList strList = output.split("\r\n");
-            foreach (QString str, strList) {
-                if(str.contains(":"))
-                {
-                    ui->EthernetMAC_lineEdit->setText(str);
-                    if(!pattern)
-                        ui->statusBar->showMessage(QStringLiteral("获取以太网 MAC完成"),2000);
-                }
-            }
-        }else {
-            ui->EthernetMAC_lineEdit->setText(QStringLiteral("请检查以太网模块是否正常"));
-        }
+
     }
 }
 
@@ -150,19 +115,10 @@ void MainWindow::GetModuleName()
     arguments<<"shell"<<"getprop"<<"ro.product.model";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","11");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
-        foreach (QString str, strList) {
-            if(str.contains("\r"))
-            {
-               ui->ModuleName_lineEdit->setText(str);
-               if(!pattern)
-                   ui->statusBar->showMessage(QStringLiteral("获取设备型号完成"),2000);
-            }
-        }
     }
 }
 
@@ -172,14 +128,8 @@ void MainWindow::GetSerialNumber()
     arguments<<"shell"<<"getprop"<<"ro.serialno";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","12");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
-        //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        ui->SerialNumber_lineEdit->setText(output);
-        if(!pattern)
-            ui->statusBar->showMessage(QStringLiteral("获取序列号完成"),2000);
-
     }
 }
 
@@ -189,19 +139,10 @@ void MainWindow::GetAndroidVersion()
     arguments<<"shell"<<"getprop"<<"ro.build.version.release";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","13");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
-        foreach (QString str, strList) {
-            if(str.contains("\r"))
-            {
-               ui->Android_Version_lineEdit->setText(str);
-               if(!pattern)
-                   ui->statusBar->showMessage(QStringLiteral("获取Android版本完成"),2000);
-            }
-        }
     }
 }
 
@@ -211,19 +152,10 @@ void MainWindow::GetScreenResolution()
     arguments<<"shell"<<"wm"<<"size";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","14");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split(":");
-        foreach (QString str, strList) {
-            if(str.contains("\r"))
-            {
-               ui->Resolution_lineEdit->setText(str);
-               if(!pattern)
-                   ui->statusBar->showMessage(QStringLiteral("获取屏幕分辨率完成"),2000);
-            }
-        }
     }
 }
 
@@ -233,19 +165,10 @@ void MainWindow::GetICType()
     arguments<<"shell"<<"getprop"<<"ro.hardware";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","15");
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
-        foreach (QString str, strList) {
-            if(str.contains("\r")){
-                ui->ICType_lineEdit->setText(str);
-                if(!pattern)
-                   ui->statusBar->showMessage(QStringLiteral("获取主芯片型号完成"),2000);
-            }
-        }
-
     }
 }
 
@@ -253,11 +176,17 @@ void MainWindow::GetAllInfo()
 {
     pattern = 1;
     GetWifiMac();
+    myProcess->waitForFinished();
     GetSerialNumber();
+    myProcess->waitForFinished();
     GetScreenResolution();
+    myProcess->waitForFinished();
     GetAndroidVersion();
+    myProcess->waitForFinished();
     GetEthernetMac();
+    myProcess->waitForFinished();
     GetModuleName();
+    myProcess->waitForFinished();
     GetICType();
     if(pattern)
         ui->statusBar->showMessage(QStringLiteral("一键获取所有信息完成"),2000);
@@ -270,20 +199,11 @@ void MainWindow::GetAllApkPackageName()
     arguments<<"shell"<<"pm"<<"list"<<"packages";
     if(myProcess != NULL && program != NULL)
     {
+        myProcess->setProperty("process","16");
         ui->apk_listWidget->clear();
         myProcess->start(program, arguments);
-        myProcess->waitForFinished();
+        //myProcess->waitForFinished();
         //qDebug() <<myProcess->readAllStandardOutput();
-        QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
-        foreach (QString str, strList) {
-            if(str.contains("\r"))
-            {
-                //qDebug() <<str.length();
-               ui->apk_listWidget->addItem(str.mid(8,str.length()-9));
-               ui->statusBar->showMessage(QStringLiteral("已获取所有APK包名"),2000);
-            }
-        }
     }
 }
 
@@ -575,6 +495,133 @@ void MainWindow::FinishSolute(int)
             ui->statusBar->showMessage(QStringLiteral("连接成功"),2000);
         }
 
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "8")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\tdevice"))
+            {
+                QStringList deviceName = str.split("\t");
+                ui->DeviceList->addItem(deviceName.at(0));
+                ui->statusBar->showMessage(QStringLiteral("扫描已连接的设备结束"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "9")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        if(!output.contains("No such file or directory")){
+            QStringList strList = output.split("\r\n");
+            foreach (QString str, strList) {
+                if(str.contains(":"))
+                {
+                    ui->WIFI_MAC_lineEdit->setText(str);
+                    if(!pattern)
+                        ui->statusBar->showMessage(QStringLiteral("获取WIFI MAC完成"),2000);
+                }
+            }
+        }else{
+            ui->WIFI_MAC_lineEdit->setText(QStringLiteral("请检查WIFI模块是否正常"));
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "10")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        if(!output.contains("No such file or directory")){
+            QStringList strList = output.split("\r\n");
+            foreach (QString str, strList) {
+                if(str.contains(":"))
+                {
+                    ui->EthernetMAC_lineEdit->setText(str);
+                    if(!pattern)
+                        ui->statusBar->showMessage(QStringLiteral("获取以太网 MAC完成"),2000);
+                }
+            }
+        }else {
+            ui->EthernetMAC_lineEdit->setText(QStringLiteral("请检查以太网模块是否正常"));
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "11")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\r"))
+            {
+               ui->ModuleName_lineEdit->setText(str);
+               if(!pattern)
+                   ui->statusBar->showMessage(QStringLiteral("获取设备型号完成"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "12")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        ui->SerialNumber_lineEdit->setText(output);
+        if(!pattern)
+            ui->statusBar->showMessage(QStringLiteral("获取序列号完成"),2000);
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "13")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\r"))
+            {
+               ui->Android_Version_lineEdit->setText(str);
+               if(!pattern)
+                   ui->statusBar->showMessage(QStringLiteral("获取Android版本完成"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "14")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split(":");
+        foreach (QString str, strList) {
+            if(str.contains("\r"))
+            {
+               ui->Resolution_lineEdit->setText(str);
+               if(!pattern)
+                   ui->statusBar->showMessage(QStringLiteral("获取屏幕分辨率完成"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "15")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\r")){
+                ui->ICType_lineEdit->setText(str);
+                if(!pattern)
+                   ui->statusBar->showMessage(QStringLiteral("获取主芯片型号完成"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "16")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\r"))
+            {
+                //qDebug() <<str.length();
+               ui->apk_listWidget->addItem(str.mid(8,str.length()-9));
+               ui->statusBar->showMessage(QStringLiteral("已获取所有APK包名"),2000);
+            }
+        }
         myProcess->setProperty("process",0);
     }
 }
