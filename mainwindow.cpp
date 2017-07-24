@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     program =  QDir::currentPath()+QDir::separator()+"adb"+QDir::separator()+"adb.exe";
     //设置界面
     setView();
+    getStoragePath();
 
     connect(ui->Link_Devices,SIGNAL(triggered(bool)),this,SLOT(LinkDevices()));
     connect(ui->WIFI_MAC,SIGNAL(triggered(bool)),this,SLOT(GetWifiMac()));
@@ -65,6 +66,19 @@ void MainWindow::setView()
 
     ui->statusBar->showMessage(QStringLiteral("欢迎使用ADB Tool"));
 
+}
+
+void MainWindow::getStoragePath()
+{
+    QStringList arguments;
+    arguments<<"shell"<<"echo"<<"$EXTERNAL_STORAGE";
+    if(myProcess != NULL && program != NULL)
+    {
+        myProcess->setProperty("process","17");
+        myProcess->start(program, arguments);
+        //myProcess->waitForFinished();
+        //qDebug() <<myProcess->readAllStandardOutput();
+    }
 }
 
 void MainWindow::LinkDevices()
@@ -162,7 +176,7 @@ void MainWindow::GetScreenResolution()
 void MainWindow::GetICType()
 {
     QStringList arguments;
-    arguments<<"shell"<<"getprop"<<"ro.hardware";
+    arguments<<"shell"<<"cat"<<"/proc/cpuinfo";
     if(myProcess != NULL && program != NULL)
     {
         myProcess->setProperty("process","15");
@@ -188,6 +202,7 @@ void MainWindow::GetAllInfo()
     GetModuleName();
     myProcess->waitForFinished();
     GetICType();
+    myProcess->waitForFinished();
     if(pattern)
         ui->statusBar->showMessage(QStringLiteral("一键获取所有信息完成"),2000);
     pattern = 0;
@@ -331,7 +346,7 @@ void MainWindow::CaptureScreen()
     //qDebug() <<fileName;
 
     QStringList arguments;
-    arguments<<"shell"<<"screencap"<<"-p"<<"/sdcard/sc.png";
+    arguments<<"shell"<<"screencap"<<"-p"<<storagePath+"/sc.png";
     if(myProcess != NULL && program != NULL && fileName != "")
     {
         myProcess->setProperty("process","5");
@@ -347,7 +362,7 @@ void MainWindow::Vedio()
     //qDebug() <<fileName;
 
     QStringList arguments;
-    arguments<<"shell"<<"screenrecord"<<"/sdcard/1.mp4";
+    arguments<<"shell"<<"screenrecord"<<storagePath+"/1.mp4";
     if(myProcess != NULL && program != NULL && fileName != "")
     {
         myProcess->start(program, arguments);
@@ -358,7 +373,7 @@ void MainWindow::Vedio()
            myProcess = new QProcess(this);
            connect(myProcess,SIGNAL(finished(int)),this,SLOT(FinishSolute(int)));
            arguments.clear();
-           arguments<<"pull"<<"/sdcard/1.mp4"<<fileName;
+           arguments<<"pull"<<storagePath+"/1.mp4"<<fileName;
            myProcess->start(program, arguments);
         }
 
@@ -417,7 +432,7 @@ void MainWindow::Fastboot()
 void MainWindow::About()
 {
     QMessageBox::about(this,QStringLiteral("关于"),QStringLiteral("<font size='26' color='blue'>欢迎使用ADB Tool</font>\
-                         <font size='5' color='black'><div style='text-align:center'>版本：V1.0</div></font>\
+                         <font size='5' color='black'><div style='text-align:center'>版本：V1.1</div></font>\
                          <font size='5' color='black'><div style='text-align:center'>作者：杨永达</div></font>"));
 }
 
@@ -471,7 +486,7 @@ void MainWindow::FinishSolute(int)
         myProcess = new QProcess(this);
         myProcess->setProperty("process","6");
         connect(myProcess,SIGNAL(finished(int)),this,SLOT(FinishSolute(int)));
-        arguments<<"pull"<<"/sdcard/sc.png"<<fileNameTemp;
+        arguments<<"pull"<<storagePath+"/sc.png"<<fileNameTemp;
         myProcess->start(program, arguments);
         //myProcess->waitForFinished();
     }
@@ -600,10 +615,10 @@ void MainWindow::FinishSolute(int)
     else if(myProcess->property("process") == "15")
     {
         QString output = QString(myProcess->readAllStandardOutput());
-        QStringList strList = output.split("\r\n");
+        QStringList strList = output.split("\r\r\n");
         foreach (QString str, strList) {
-            if(str.contains("\r")){
-                ui->ICType_lineEdit->setText(str);
+            if(str.contains("Hardware")){
+                ui->ICType_lineEdit->setText(str.split(":").at(1));
                 if(!pattern)
                    ui->statusBar->showMessage(QStringLiteral("获取主芯片型号完成"),2000);
             }
@@ -620,6 +635,19 @@ void MainWindow::FinishSolute(int)
                 //qDebug() <<str.length();
                ui->apk_listWidget->addItem(str.mid(8,str.length()-9));
                ui->statusBar->showMessage(QStringLiteral("已获取所有APK包名"),2000);
+            }
+        }
+        myProcess->setProperty("process",0);
+    }
+    else if(myProcess->property("process") == "17")
+    {
+        QString output = QString(myProcess->readAllStandardOutput());
+        QStringList strList = output.split("\r\n");
+        foreach (QString str, strList) {
+            if(str.contains("\r"))
+            {
+               //qDebug() <<str.mid(0,str.length()-1);
+               storagePath = str.mid(0,str.length()-1);
             }
         }
         myProcess->setProperty("process",0);

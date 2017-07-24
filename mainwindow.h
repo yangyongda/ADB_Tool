@@ -22,9 +22,11 @@ private:
     QProcess *myProcess;
     QString program;
     QString fileNameTemp;
+    QString storagePath;
     int pattern; //模式 0：单个  1：一键
 
     void setView();
+    void getStoragePath();
 private slots:
     void LinkDevices();
     void GetWifiMac();
