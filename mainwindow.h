@@ -3,7 +3,8 @@
 
 #include <QMainWindow>
 #include <QProcess>
-#include<QListWidgetItem>
+#include <QListWidgetItem>
+#include <QLabel>
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QProcess *myProcess;
+    QLabel * storagePathLabel;
     QString program;
     QString fileNameTemp;
     QString storagePath;

@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //程序路径
     myProcess = new QProcess(this);
     program =  QDir::currentPath()+QDir::separator()+"adb"+QDir::separator()+"adb.exe";
+    storagePathLabel = new QLabel(this);
     //设置界面
     setView();
     getStoragePath();
@@ -83,6 +84,8 @@ void MainWindow::getStoragePath()
 
 void MainWindow::LinkDevices()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     ui->DeviceList->clear();
     QStringList arguments;
     arguments<<"devices";
@@ -97,6 +100,8 @@ void MainWindow::LinkDevices()
 
 void MainWindow::GetWifiMac()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"cat"<<"/sys/class/net/wlan0/address";
     if(myProcess != NULL && program != NULL)
@@ -111,6 +116,8 @@ void MainWindow::GetWifiMac()
 
 void MainWindow::GetEthernetMac()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"cat"<<"/sys/class/net/eth0/address";
     if(myProcess != NULL && program != NULL)
@@ -125,6 +132,8 @@ void MainWindow::GetEthernetMac()
 
 void MainWindow::GetModuleName()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"getprop"<<"ro.product.model";
     if(myProcess != NULL && program != NULL)
@@ -138,6 +147,8 @@ void MainWindow::GetModuleName()
 
 void MainWindow::GetSerialNumber()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"getprop"<<"ro.serialno";
     if(myProcess != NULL && program != NULL)
@@ -149,6 +160,8 @@ void MainWindow::GetSerialNumber()
 
 void MainWindow::GetAndroidVersion()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"getprop"<<"ro.build.version.release";
     if(myProcess != NULL && program != NULL)
@@ -162,6 +175,8 @@ void MainWindow::GetAndroidVersion()
 
 void MainWindow::GetScreenResolution()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"wm"<<"size";
     if(myProcess != NULL && program != NULL)
@@ -175,6 +190,8 @@ void MainWindow::GetScreenResolution()
 
 void MainWindow::GetICType()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"cat"<<"/proc/cpuinfo";
     if(myProcess != NULL && program != NULL)
@@ -210,6 +227,8 @@ void MainWindow::GetAllInfo()
 
 void MainWindow::GetAllApkPackageName()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"shell"<<"pm"<<"list"<<"packages";
     if(myProcess != NULL && program != NULL)
@@ -346,6 +365,11 @@ void MainWindow::CaptureScreen()
     //qDebug() <<fileName;
 
     QStringList arguments;
+    if(storagePath == NULL || storagePath == "" || storagePath.isEmpty())
+    {
+        getStoragePath();
+        myProcess->waitForFinished();
+    }
     arguments<<"shell"<<"screencap"<<"-p"<<storagePath+"/sc.png";
     if(myProcess != NULL && program != NULL && fileName != "")
     {
@@ -362,6 +386,11 @@ void MainWindow::Vedio()
     //qDebug() <<fileName;
 
     QStringList arguments;
+    if(storagePath == NULL || storagePath == "" || storagePath.isEmpty())
+    {
+        getStoragePath();
+        myProcess->waitForFinished();
+    }
     arguments<<"shell"<<"screenrecord"<<storagePath+"/1.mp4";
     if(myProcess != NULL && program != NULL && fileName != "")
     {
@@ -383,6 +412,8 @@ void MainWindow::Vedio()
 
 void MainWindow::Restart()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"reboot";
     if(myProcess != NULL && program != NULL)
@@ -411,6 +442,8 @@ void MainWindow::NetworkConnect()
 
 void MainWindow::Recovery()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"reboot"<<"recovery";
     if(myProcess != NULL && program != NULL)
@@ -421,6 +454,8 @@ void MainWindow::Recovery()
 
 void MainWindow::Fastboot()
 {
+    if(myProcess->state() == QProcess::Running)
+        return;
     QStringList arguments;
     arguments<<"reboot"<<"bootloader";
     if(myProcess != NULL && program != NULL)
@@ -525,6 +560,7 @@ void MainWindow::FinishSolute(int)
             }
         }
         myProcess->setProperty("process",0);
+        getStoragePath();
     }
     else if(myProcess->property("process") == "9")
     {
@@ -648,6 +684,11 @@ void MainWindow::FinishSolute(int)
             {
                //qDebug() <<str.mid(0,str.length()-1);
                storagePath = str.mid(0,str.length()-1);
+               storagePathLabel->setFrameStyle(QFrame::Box | QFrame::Sunken);//设置label的形状和阴影模式的,这里采用的box形状和凹陷模式
+               storagePathLabel->setText(storagePath);//设置文本内容
+               storagePathLabel->setTextFormat(Qt::RichText);//设置文本格式为富文本格式，又称多文本格式，用于跨平台使用的
+               storagePathLabel->setOpenExternalLinks(true);//运行打开label上的链接
+               ui->statusBar->addPermanentWidget(storagePathLabel);//将label附加到状态栏上，永久性的
             }
         }
         myProcess->setProperty("process",0);
