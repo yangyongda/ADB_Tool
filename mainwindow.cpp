@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //程序路径
     myProcess = new QProcess(this);
     program =  QDir::currentPath()+QDir::separator()+"adb"+QDir::separator()+"adb.exe";
-    storagePathLabel = new QLabel(this);
+    storagePathLabel = new QLabel(this,Qt::Window); //第二个参数要加，否则会出现设备未连接时打开软件第一个menu不能点到
     //设置界面
     setView();
     getStoragePath();
@@ -467,7 +467,7 @@ void MainWindow::Fastboot()
 void MainWindow::About()
 {
     QMessageBox::about(this,QStringLiteral("关于"),QStringLiteral("<font size='26' color='blue'>欢迎使用ADB Tool</font>\
-                         <font size='5' color='black'><div style='text-align:center'>版本：V1.1</div></font>\
+                         <font size='5' color='black'><div style='text-align:center'>版本：V1.2</div></font>\
                          <font size='5' color='black'><div style='text-align:center'>作者：杨永达</div></font>"));
 }
 
@@ -677,6 +677,7 @@ void MainWindow::FinishSolute(int)
     }
     else if(myProcess->property("process") == "17")
     {
+        qDebug() <<myProcess->readAllStandardOutput();
         QString output = QString(myProcess->readAllStandardOutput());
         QStringList strList = output.split("\r\n");
         foreach (QString str, strList) {
