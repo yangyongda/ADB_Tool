@@ -677,7 +677,7 @@ void MainWindow::FinishSolute(int)
     }
     else if(myProcess->property("process") == "17")
     {
-        qDebug() <<myProcess->readAllStandardOutput();
+        //qDebug() <<myProcess->readAllStandardOutput();
         QString output = QString(myProcess->readAllStandardOutput());
         QStringList strList = output.split("\r\n");
         foreach (QString str, strList) {
